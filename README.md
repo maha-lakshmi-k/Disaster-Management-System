@@ -1,4 +1,4 @@
-#🌪️ Disaster Management System
+# 🌪️ Disaster Management System
 
 The Disaster Management System is a web-based application designed to manage and monitor disaster situations efficiently.
 It helps authorities track disasters, victims, resources, shelters, and relief operations through a single dashboard.
