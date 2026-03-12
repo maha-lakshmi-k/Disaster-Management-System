@@ -151,12 +151,27 @@ The system provides the following features:
 
 ## 🚀 How to Run the Project
 
-1️⃣ Download or clone the repository
+### Method 1: Using a Web Browser
 
-2️⃣ Open the project folder
+1. Download or clone the project from GitHub.
 
-3️⃣ Open the HTML file in a web browser
+2. Open the project folder.
 
-- index.html
-  
-4️⃣ The application will start directly in the browser.
+3. Double-click the file:
+
+      index.html
+
+4. The project will open directly in your web browser.
+### Method 2: Using Visual Studio Code
+
+1. Install Visual Studio Code.
+
+2. Open the project folder in VS Code.
+
+3. Install the Live Server extension.
+
+4. Right-click on the HTML file:
+
+     index.html
+
+5. Click Open with Live Server.
