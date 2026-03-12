@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DISASTER MANAGEMENT SYSTEM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.min.js"></script>
+  <style>
+    body { background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%); }
+    .hero-bg { background-image: url('https://images.unsplash.com/photo-1604147495798-57f4e9a0a0d3?auto=format&fit=crop&q=80'); background-size: cover; background-position: center; }
+  </style>
+</head>
+<body class="text-slate-200 min-h-screen">
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center">
+    <div class="bg-slate-800/90 backdrop-blur-xl p-10 rounded-3xl shadow-2xl w-full max-w-md border border-orange-500/30">
+      <div class="text-center mb-8">
+        <i class="fa-solid fa-house-flood-water text-6xl text-orange-500"></i>
+        <h1 class="text-4xl font-bold mt-4 text-white">DISASTER MANAGEMENT SYSTEM</h1>
+        <p class="text-slate-400 mt-2">Organized by Naga Maha Lakshmi</p>
+      </div>
+      <div class="flex mb-6">
+        <button onclick="showLoginTab('admin')" class="flex-1 py-3 bg-orange-600 rounded-t-2xl font-semibold" id="adminTab">Admin Login</button>
+        <button onclick="showLoginTab('user')" class="flex-1 py-3 bg-slate-700 rounded-t-2xl font-semibold" id="userTab">User Login/Register</button>
+      </div>
+      <!-- Admin Login -->
+      <div id="adminLogin" class="space-y-6">
+        <input id="adminUsername" type="text" value="admin" placeholder="Admin Username" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3"/>
+        <input id="adminPassword" type="password" value="kowada123" placeholder="Admin Password" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3"/>
+        <button onclick="login('admin')" class="w-full bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl font-semibold text-lg transition">Admin Login</button>
+      </div>
+      <!-- User Login/Register -->
+      <div id="userLogin" class="space-y-6 hidden">
+        <input id="userUsername" type="text" placeholder="Username" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3"/>
+        <input id="userPassword" type="password" placeholder="Password" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3"/>
+        <button onclick="login('user')" class="w-full bg-orange-600 hover:bg-orange-700 py-4 rounded-2xl font-semibold text-lg transition">User Login</button>
+        <button onclick="registerUser()" class="w-full bg-emerald-600 hover:bg-emerald-700 py-4 rounded-2xl font-semibold text-lg transition">Register New User</button>
+      </div>
+      <p class="text-center text-xs text-slate-500 mt-4">Public prototype - Data stored locally in your browser</p>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="mainApp" class="hidden flex h-screen">
+    <!-- SIDEBAR -->
+    <div class="w-72 bg-slate-900 border-r border-slate-700 flex flex-col">
+      <div class="p-6 border-b border-slate-700">
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-house-flood-water text-4xl text-orange-500"></i>
+          <div>
+            <h1 class="text-2xl font-bold">DMS</h1>
+            <p class="text-xs text-emerald-400">by Naga Maha Lakshmi</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+        <a onclick="showSection('dashboard')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-800 cursor-pointer active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+        <a onclick="showSection('disasters')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-800 cursor-pointer"><i class="fa-solid fa-hurricane"></i> Disasters</a>
+        <a onclick="showSection('victims')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-800 cursor-pointer"><i class="fa-solid fa-user-injured"></i> Victims</a>
+        <a onclick="showSection('resources')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-800 cursor-pointer"><i class="fa-solid fa-boxes-packing"></i> Resources</a>
+        <a onclick="showSection('shelters')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-800 cursor-pointer"><i class="fa-solid fa-tent"></i> Shelters</a>
+        <a onclick="showSection('operations')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-800 cursor-pointer"><i class="fa-solid fa-helmet-safety"></i> Operations</a>
+        <a onclick="showSection('distributions')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-800 cursor-pointer"><i class="fa-solid fa-truck"></i> Distributions</a>
+        <a onclick="showSection('sqlconsole')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-slate-800 cursor-pointer" id="sqlNav"><i class="fa-solid fa-terminal"></i> SQL Console</a>
+      </nav>
+      <div class="p-4 border-t border-slate-700">
+        <button onclick="logout()" class="w-full text-slate-400 hover:text-white flex items-center gap-2 justify-center text-sm">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTENT (with search bars) -->
+    <div class="flex-1 overflow-auto p-8">
+      <!-- Dashboard -->
+      <div id="dashboard" class="section">
+        <div class="hero-bg h-80 rounded-3xl relative mb-8 flex items-end">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 to-transparent rounded-3xl"></div>
+          <div class="relative p-10">
+            <h1 class="text-5xl font-bold">DISASTER MANAGEMENT SYSTEM</h1>
+            <p class="text-2xl text-orange-300 mt-2">Organized by Naga Maha Lakshmi • Live Response Dashboard</p>
+          </div>
+        </div>
+        <div id="dashStats" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div>
+      </div>
+
+      <!-- Disasters -->
+      <div id="disasters" class="section hidden">
+        <h2 class="text-3xl font-bold mb-4">Disasters</h2>
+        <input id="search_disasters" oninput="searchEntity('Disaster', this.value)" placeholder="Search by Type, Location..." class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 mb-6">
+        <table id="tbl_disasters" class="w-full bg-slate-800 rounded-3xl overflow-hidden"></table>
+      </div>
+
+      <!-- Victims -->
+      <div id="victims" class="section hidden">
+        <h2 class="text-3xl font-bold mb-4">Victims</h2>
+        <input id="search_victims" oninput="searchEntity('Victim', this.value)" placeholder="Search by Name, Injury..." class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 mb-6">
+        <table id="tbl_victims" class="w-full bg-slate-800 rounded-3xl overflow-hidden"></table>
+      </div>
+
+      <!-- Resources -->
+      <div id="resources" class="section hidden">
+        <h2 class="text-3xl font-bold mb-4">Resources</h2>
+        <input id="search_resources" oninput="searchEntity('Resource', this.value)" placeholder="Search by Name, Type..." class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 mb-6">
+        <table id="tbl_resources" class="w-full bg-slate-800 rounded-3xl overflow-hidden"></table>
+      </div>
+
+      <!-- Shelters -->
+      <div id="shelters" class="section hidden">
+        <h2 class="text-3xl font-bold mb-4">Shelters</h2>
+        <input id="search_shelters" oninput="searchEntity('Shelter', this.value)" placeholder="Search by Name, Location..." class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 mb-6">
+        <table id="tbl_shelters" class="w-full bg-slate-800 rounded-3xl overflow-hidden"></table>
+      </div>
+
+      <!-- Operations -->
+      <div id="operations" class="section hidden">
+        <h2 class="text-3xl font-bold mb-4">Operations / Teams</h2>
+        <input id="search_operations" oninput="searchEntity('Operation', this.value)" placeholder="Search by TeamName, Leader..." class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 mb-6">
+        <table id="tbl_operations" class="w-full bg-slate-800 rounded-3xl overflow-hidden"></table>
+      </div>
+
+      <!-- Distributions -->
+      <div id="distributions" class="section hidden">
+        <h2 class="text-3xl font-bold mb-4">Distributions</h2>
+        <input id="search_distributions" oninput="searchEntity('Distribution', this.value)" placeholder="Search by ResourceID, Date..." class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-6 py-4 mb-6">
+        <table id="tbl_distributions" class="w-full bg-slate-800 rounded-3xl overflow-hidden"></table>
+      </div>
+
+      <!-- SQL Console (admin only) -->
+      <div id="sqlconsole" class="section hidden">
+        <h2 class="text-3xl font-bold mb-6">SQL Console (Admin)</h2>
+        <textarea id="sqlInput" rows="6" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-slate-200 font-mono" placeholder="Write SELECT, INSERT, UPDATE queries here..."></textarea>
+        <button onclick="runSQL()" class="mt-4 bg-emerald-600 hover:bg-emerald-700 px-8 py-4 rounded-2xl">Execute SQL</button>
+        <div id="sqlResult" class="mt-6 bg-slate-900 p-6 rounded-2xl overflow-auto max-h-96"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let db = null;
+    let currentRole = '';
+    let config = { locateFile: filename => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${filename}` };
+
+    async function initDB() {
+      const SQL = await initSqlJs(config);
+      db = new SQL.Database();
+
+      // CREATE TABLES (same as before)
+      db.run(`
+        CREATE TABLE User (
+          Username TEXT PRIMARY KEY,
+          Password TEXT,
+          Role TEXT
+        );
+        CREATE TABLE Disaster (
+          DisasterID TEXT PRIMARY KEY,
+          Type TEXT,
+          Location TEXT,
+          AffectedArea TEXT,
+          NoAffected INTEGER,
+          Date TEXT,
+          Status TEXT
+        );
+        CREATE TABLE Victim (
+          VictimID TEXT PRIMARY KEY,
+          Name TEXT,
+          Age INTEGER,
+          Gender TEXT,
+          Injury TEXT,
+          Status TEXT,
+          DoctorName TEXT,
+          MedicalReport TEXT,
+          DisasterID TEXT,
+          FOREIGN KEY(DisasterID) REFERENCES Disaster(DisasterID)
+        );
+        CREATE TABLE Resource (
+          ResourceID TEXT PRIMARY KEY,
+          Name TEXT,
+          Type TEXT,
+          QuantityAvailable INTEGER,
+          AllocatedTo TEXT
+        );
+        CREATE TABLE Shelter (
+          ShelterID TEXT PRIMARY KEY,
+          Name TEXT,
+          Location TEXT,
+          Capacity INTEGER,
+          Occupied INTEGER,
+          Status TEXT
+        );
+        CREATE TABLE Operation (
+          OperationID TEXT PRIMARY KEY,
+          TeamName TEXT,
+          Leader TEXT,
+          Contact TEXT,
+          StartTime TEXT,
+          EndTime TEXT,
+          Status TEXT,
+          Organization TEXT,
+          DisasterID TEXT,
+          FOREIGN KEY(DisasterID) REFERENCES Disaster(DisasterID)
+        );
+        CREATE TABLE Distribution (
+          DistributionID TEXT PRIMARY KEY,
+          ResourceID TEXT,
+          Quantity INTEGER,
+          Date TEXT,
+          ToVictimID TEXT,
+          ToShelterID TEXT,
+          FOREIGN KEY(ResourceID) REFERENCES Resource(ResourceID),
+          FOREIGN KEY(ToVictimID) REFERENCES Victim(VictimID),
+          FOREIGN KEY(ToShelterID) REFERENCES Shelter(ShelterID)
+        );
+      `);
+
+      // INSERT Admin User
+      db.run(`INSERT INTO User VALUES ('admin', 'kowada123', 'admin');`);
+
+      // INSERT Realistic Data based on real details
+      // Disasters: Using real examples from India 2020-2025
+      db.run(`
+        INSERT INTO Disaster VALUES ('D001', 'Flood', 'Kerala', 'Alappuzha', 4500, '2025-08-15', 'Ongoing');
+        INSERT INTO Disaster VALUES ('D002', 'Flash Flood', 'Uttarakhand', 'Chamoli', 2000, '2025-08-01', 'Recovery');
+        INSERT INTO Disaster VALUES ('D003', 'Cloudburst', 'Jammu and Kashmir', 'Kishtwar', 1500, '2025-08-14', 'Controlled');
+        INSERT INTO Disaster VALUES ('D004', 'Flood', 'Punjab', 'Ludhiana', 3000, '2025-07-20', 'Ongoing');
+        INSERT INTO Disaster VALUES ('D005', 'Cyclone', 'Odisha', 'Puri', 5000, '2025-10-05', 'Active');
+        INSERT INTO Disaster VALUES ('D006', 'Landslide', 'Himachal Pradesh', 'Shimla', 800, '2025-09-10', 'Recovery');
+        INSERT INTO Disaster VALUES ('D007', 'Earthquake', 'Manipur', 'Imphal', 1200, '2025-11-20', 'Controlled');
+        INSERT INTO Disaster VALUES ('D008', 'Flood', 'Assam', 'Majuli', 6200, '2025-06-15', 'Ongoing');
+        INSERT INTO Disaster VALUES ('D009', 'Cyclone', 'Andhra Pradesh', 'Visakhapatnam', 4000, '2024-11-01', 'Recovery');
+        INSERT INTO Disaster VALUES ('D010', 'Heatwave', 'Rajasthan', 'Jaipur', 1000, '2025-05-01', 'Controlled');
+        INSERT INTO Disaster VALUES ('D011', 'Flood', 'Bihar', 'Patna', 3500, '2025-07-10', 'Ongoing');
+        INSERT INTO Disaster VALUES ('D012', 'Landslide', 'Uttarakhand', 'Nainital', 900, '2025-08-05', 'Recovery');
+        INSERT INTO Disaster VALUES ('D013', 'Cyclone', 'Tamil Nadu', 'Chennai', 2800, '2024-12-15', 'Active');
+        INSERT INTO Disaster VALUES ('D014', 'Earthquake', 'Gujarat', 'Bhuj', 1500, '2025-01-26', 'Controlled');
+        INSERT INTO Disaster VALUES ('D015', 'Flood', 'West Bengal', 'Sundarbans', 4000, '2025-09-01', 'Ongoing');
+        INSERT INTO Disaster VALUES ('D016', 'Cloudburst', 'Himachal Pradesh', 'Manali', 1200, '2025-07-25', 'Recovery');
+        INSERT INTO Disaster VALUES ('D017', 'Cyclone', 'Kerala', 'Kochi', 2500, '2025-11-10', 'Active');
+        INSERT INTO Disaster VALUES ('D018', 'Flood', 'Madhya Pradesh', 'Bhopal', 1800, '2025-08-20', 'Controlled');
+        INSERT INTO Disaster VALUES ('D019', 'Landslide', 'Sikkim', 'Gangtok', 700, '2025-06-30', 'Recovery');
+        INSERT INTO Disaster VALUES ('D020', 'Heatwave', 'Delhi', 'New Delhi', 500, '2025-04-15', 'Controlled');
+      `);
+
+      // Victims: Realistic Indian names, injuries
+      db.run(`
+        INSERT INTO Victim VALUES ('V001', 'Aarush Kumar', 28, 'M', 'Fractured Leg', 'Treated', 'Dr. Rajesh Singh', 'Stable', 'D001');
+        INSERT INTO Victim VALUES ('V002', 'Priya Sharma', 35, 'F', 'Head Injury', 'Critical', 'Dr. Anjali Gupta', 'Under Observation', 'D002');
+        INSERT INTO Victim VALUES ('V003', 'Aviraj Patel', 42, 'M', 'Minor Cuts', 'Treated', 'Dr. Suresh Nair', 'Discharged', 'D003');
+        INSERT INTO Victim VALUES ('V004', 'Lakshmi Devi', 19, 'F', 'Broken Arm', 'Treated', 'Dr. Priya Menon', 'Recovery', 'D004');
+        INSERT INTO Victim VALUES ('V005', 'Kapil Reddy', 55, 'M', 'Sprain', 'Treated', 'Dr. Manoj Kumar', 'Stable', 'D005');
+        INSERT INTO Victim VALUES ('V006', 'Sita Ram', 37, 'F', 'Burns', 'Critical', 'Dr. Kavita Sharma', 'ICU', 'D006');
+        INSERT INTO Victim VALUES ('V007', 'Kiaan Singh', 45, 'M', 'None', 'Safe', 'Dr. Vikram Patel', 'Discharged', 'D007');
+        INSERT INTO Victim VALUES ('V008', 'Naya Gupta', 24, 'F', 'Fractured Arm', 'Treated', 'Dr. Rahul Desai', 'Stable', 'D008');
+        INSERT INTO Victim VALUES ('V009', 'Vibhav Joshi', 31, 'M', 'Concussion', 'Critical', 'Dr. Meera Rao', 'Under Observation', 'D009');
+        INSERT INTO Victim VALUES ('V010', 'Khari Nair', 48, 'F', 'Lacerations', 'Treated', 'Dr. Arjun Verma', 'Discharged', 'D010');
+        INSERT INTO Victim VALUES ('V011', 'Achyut Menon', 26, 'M', 'Dislocated Shoulder', 'Treated', 'Dr. Neha Kapoor', 'Recovery', 'D011');
+        INSERT INTO Victim VALUES ('V012', 'Geetha Pillai', 39, 'F', 'Smoke Inhalation', 'Critical', 'Dr. Sanjay Bose', 'ICU', 'D012');
+        INSERT INTO Victim VALUES ('V013', 'Suveer Iyer', 52, 'M', 'Bruises', 'Treated', 'Dr. Pooja Jain', 'Stable', 'D013');
+        INSERT INTO Victim VALUES ('V014', 'Yamir Khan', 33, 'M', 'Broken Ribs', 'Critical', 'Dr. Amit Shah', 'Under Observation', 'D014');
+        INSERT INTO Victim VALUES ('V015', 'Varunesh Yadav', 41, 'F', 'Cuts and Abrasions', 'Treated', 'Dr. Ritu Agarwal', 'Discharged', 'D015');
+        INSERT INTO Victim VALUES ('V016', 'Hridyansh Thakur', 29, 'M', 'Ankle Sprain', 'Treated', 'Dr. Deepak Mehta', 'Recovery', 'D016');
+        INSERT INTO Victim VALUES ('V017', 'Veeraj Banerjee', 46, 'F', 'Heat Exhaustion', 'Treated', 'Dr. Swati Choudhury', 'Stable', 'D017');
+        INSERT INTO Victim VALUES ('V018', 'Vyom Das', 22, 'M', 'Dehydration', 'Treated', 'Dr. Karan Malhotra', 'Discharged', 'D018');
+        INSERT INTO Victim VALUES ('V019', 'Surendra Roy', 50, 'M', 'Hypothermia', 'Critical', 'Dr. Nisha Sengupta', 'ICU', 'D019');
+        INSERT INTO Victim VALUES ('V020', 'Vishnu Chatterjee', 34, 'F', 'Minor Burns', 'Treated', 'Dr. Rohit Ghosh', 'Recovery', 'D020');
+      `);
+
+      // Resources: Realistic relief supplies
+      db.run(`
+        INSERT INTO Resource VALUES ('R001', 'Drinking Water (1L Bottles)', 'Water', 15000, 'D001 Shelters');
+        INSERT INTO Resource VALUES ('R002', 'Canned Food Packs', 'Food', 5000, 'D002 Operations');
+        INSERT INTO Resource VALUES ('R003', 'First Aid Kits', 'Medical', 2000, 'All Disasters');
+        INSERT INTO Resource VALUES ('R004', 'Blankets', 'Shelter', 10000, 'D003 Victims');
+        INSERT INTO Resource VALUES ('R005', 'Tents (Family Size)', 'Shelter', 500, 'D004 Areas');
+        INSERT INTO Resource VALUES ('R006', 'Antibiotics Medicines', 'Medical', 8000, 'D005 Clinics');
+        INSERT INTO Resource VALUES ('R007', 'Battery-Powered Radios', 'Communication', 3000, 'Operations Teams');
+        INSERT INTO Resource VALUES ('R008', 'Flashlights with Batteries', 'Lighting', 4000, 'Shelters');
+        INSERT INTO Resource VALUES ('R009', 'Dust Masks', 'Protection', 10000, 'Flood Zones');
+        INSERT INTO Resource VALUES ('R010', 'Moist Towelettes', 'Sanitation', 20000, 'All Areas');
+        INSERT INTO Resource VALUES ('R011', 'Garbage Bags', 'Sanitation', 15000, 'Camps');
+        INSERT INTO Resource VALUES ('R012', 'Duct Tape', 'Repair', 5000, 'Teams');
+        INSERT INTO Resource VALUES ('R013', 'Protein Bars', 'Food', 10000, 'Victims');
+        INSERT INTO Resource VALUES ('R014', 'Baby Formula', 'Infant', 2000, 'Family Shelters');
+        INSERT INTO Resource VALUES ('R015', 'Diapers', 'Infant', 5000, 'Family Areas');
+        INSERT INTO Resource VALUES ('R016', 'Pain Relievers', 'Medical', 6000, 'Clinics');
+        INSERT INTO Resource VALUES ('R017', 'Whistles', 'Safety', 3000, 'Rescue Kits');
+        INSERT INTO Resource VALUES ('R018', 'Plastic Sheeting', 'Shelter', 4000, 'Temporary Housing');
+        INSERT INTO Resource VALUES ('R019', 'Soap and Hand Sanitizer', 'Hygiene', 10000, 'All Camps');
+        INSERT INTO Resource VALUES ('R020', 'Non-Perishable Fruits', 'Food', 7000, 'Distribution Points');
+      `);
+
+      // Shelters: Realistic names and locations
+      db.run(`
+        INSERT INTO Shelter VALUES ('S001', 'Alappuzha Community Hall', 'Kerala', 500, 350, 'Active');
+        INSERT INTO Shelter VALUES ('S002', 'Chamoli School Camp', 'Uttarakhand', 400, 280, 'Active');
+        INSERT INTO Shelter VALUES ('S003', 'Kishtwar Temple Shelter', 'Jammu and Kashmir', 300, 200, 'Active');
+        INSERT INTO Shelter VALUES ('S004', 'Ludhiana Govt Building', 'Punjab', 600, 450, 'Active');
+        INSERT INTO Shelter VALUES ('S005', 'Puri Beach Relief Camp', 'Odisha', 700, 500, 'Active');
+        INSERT INTO Shelter VALUES ('S006', 'Shimla Hill Station Shelter', 'Himachal Pradesh', 250, 180, 'Active');
+        INSERT INTO Shelter VALUES ('S007', 'Imphal Valley Camp', 'Manipur', 400, 300, 'Active');
+        INSERT INTO Shelter VALUES ('S008', 'Majuli Island Shelter', 'Assam', 500, 400, 'Active');
+        INSERT INTO Shelter VALUES ('S009', 'Visakhapatnam Port Camp', 'Andhra Pradesh', 600, 450, 'Active');
+        INSERT INTO Shelter VALUES ('S010', 'Jaipur Desert Relief', 'Rajasthan', 300, 220, 'Active');
+        INSERT INTO Shelter VALUES ('S011', 'Patna Riverside Camp', 'Bihar', 550, 400, 'Active');
+        INSERT INTO Shelter VALUES ('S012', 'Nainital Lake Shelter', 'Uttarakhand', 350, 250, 'Active');
+        INSERT INTO Shelter VALUES ('S013', 'Chennai Coastal Camp', 'Tamil Nadu', 700, 550, 'Active');
+        INSERT INTO Shelter VALUES ('S014', 'Bhuj Earthquake Relief', 'Gujarat', 400, 300, 'Active');
+        INSERT INTO Shelter VALUES ('S015', 'Sundarbans Forest Camp', 'West Bengal', 450, 320, 'Active');
+        INSERT INTO Shelter VALUES ('S016', 'Manali Mountain Shelter', 'Himachal Pradesh', 200, 150, 'Active');
+        INSERT INTO Shelter VALUES ('S017', 'Kochi Harbor Camp', 'Kerala', 500, 380, 'Active');
+        INSERT INTO Shelter VALUES ('S018', 'Bhopal City Relief', 'Madhya Pradesh', 600, 450, 'Active');
+        INSERT INTO Shelter VALUES ('S019', 'Gangtok Hill Camp', 'Sikkim', 250, 180, 'Active');
+        INSERT INTO Shelter VALUES ('S020', 'New Delhi Urban Shelter', 'Delhi', 800, 600, 'Active');
+      `);
+
+      // Operations: Realistic teams and organizations
+      db.run(`
+        INSERT INTO Operation VALUES ('OP001', 'NDRF Team Alpha', 'Capt. Aarush Kumar', '9876543210', '2025-08-16', '2025-09-01', 'Active', 'NDRF', 'D001');
+        INSERT INTO Operation VALUES ('OP002', 'Red Cross Bravo', 'Dr. Priya Sharma', '9123456789', '2025-08-02', '2025-08-20', 'Completed', 'Red Cross', 'D002');
+        INSERT INTO Operation VALUES ('OP003', 'Army Relief Gamma', 'Maj. Aviraj Patel', '9988776655', '2025-08-15', '2025-09-10', 'Ongoing', 'Indian Army', 'D003');
+        INSERT INTO Operation VALUES ('OP004', 'NGO Help Delta', 'Ms. Lakshmi Devi', '9765432109', '2025-07-21', '2025-08-15', 'Active', 'Oxfam India', 'D004');
+        INSERT INTO Operation VALUES ('OP005', 'Coast Guard Epsilon', 'Cmdr. Kapil Reddy', '9654321098', '2025-10-06', '2025-10-25', 'Completed', 'Indian Coast Guard', 'D005');
+        INSERT INTO Operation VALUES ('OP006', 'State Disaster Force Zeta', 'Insp. Sita Ram', '9543210987', '2025-09-11', '2025-09-30', 'Ongoing', 'SDRF', 'D006');
+        INSERT INTO Operation VALUES ('OP007', 'UNICEF Team Eta', 'Dr. Kiaan Singh', '9432109876', '2025-11-21', '2025-12-15', 'Active', 'UNICEF', 'D007');
+        INSERT INTO Operation VALUES ('OP008', 'WHO Medical Theta', 'Nurse Naya Gupta', '9321098765', '2025-06-16', '2025-07-10', 'Completed', 'WHO', 'D008');
+        INSERT INTO Operation VALUES ('OP009', 'CARE India Iota', 'Mr. Vibhav Joshi', '9210987654', '2024-11-02', '2024-11-20', 'Ongoing', 'CARE India', 'D009');
+        INSERT INTO Operation VALUES ('OP010', 'Greenpeace Kappa', 'Ms. Khari Nair', '9109876543', '2025-05-02', '2025-05-25', 'Active', 'Greenpeace', 'D010');
+        INSERT INTO Operation VALUES ('OP011', 'Save the Children Lambda', 'Dr. Achyut Menon', '9098765432', '2025-07-11', '2025-08-05', 'Completed', 'Save the Children', 'D011');
+        INSERT INTO Operation VALUES ('OP012', 'ActionAid Mu', 'Ms. Geetha Pillai', '8987654321', '2025-08-06', '2025-08-25', 'Ongoing', 'ActionAid', 'D012');
+        INSERT INTO Operation VALUES ('OP013', 'Plan India Nu', 'Mr. Suveer Iyer', '8876543210', '2024-12-16', '2025-01-10', 'Active', 'Plan India', 'D013');
+        INSERT INTO Operation VALUES ('OP014', 'CRY Xi', 'Dr. Yamir Khan', '8765432109', '2025-01-27', '2025-02-15', 'Completed', 'CRY', 'D014');
+        INSERT INTO Operation VALUES ('OP015', 'Habitat for Humanity Omicron', 'Ms. Varunesh Yadav', '8654321098', '2025-09-02', '2025-09-20', 'Ongoing', 'Habitat for Humanity', 'D015');
+        INSERT INTO Operation VALUES ('OP016', 'World Vision Pi', 'Mr. Hridyansh Thakur', '8543210987', '2025-07-26', '2025-08-15', 'Active', 'World Vision', 'D016');
+        INSERT INTO Operation VALUES ('OP017', 'Amnesty Rho', 'Ms. Veeraj Banerjee', '8432109876', '2025-11-11', '2025-11-30', 'Completed', 'Amnesty International', 'D017');
+        INSERT INTO Operation VALUES ('OP018', 'MSF Sigma', 'Dr. Vyom Das', '8321098765', '2025-08-21', '2025-09-10', 'Ongoing', 'Doctors Without Borders', 'D018');
+        INSERT INTO Operation VALUES ('OP019', 'IFRC Tau', 'Mr. Surendra Roy', '8210987654', '2025-07-01', '2025-07-20', 'Active', 'IFRC', 'D019');
+        INSERT INTO Operation VALUES ('OP020', 'UNHCR Upsilon', 'Ms. Vishnu Chatterjee', '8109876543', '2025-04-16', '2025-05-05', 'Completed', 'UNHCR', 'D020');
+      `);
+
+      // Distributions: Linking realistically
+      db.run(`
+        INSERT INTO Distribution VALUES ('DIST001', 'R001', 5000, '2025-08-18', 'V001', 'S001');
+        INSERT INTO Distribution VALUES ('DIST002', 'R002', 2000, '2025-08-03', 'V002', 'S002');
+        INSERT INTO Distribution VALUES ('DIST003', 'R003', 1000, '2025-08-16', 'V003', 'S003');
+        INSERT INTO Distribution VALUES ('DIST004', 'R004', 3000, '2025-07-22', NULL, 'S004');
+        INSERT INTO Distribution VALUES ('DIST005', 'R005', 200, '2025-10-07', 'V005', 'S005');
+        INSERT INTO Distribution VALUES ('DIST006', 'R006', 4000, '2025-09-12', 'V006', NULL);
+        INSERT INTO Distribution VALUES ('DIST007', 'R007', 1500, '2025-11-22', NULL, 'S007');
+        INSERT INTO Distribution VALUES ('DIST008', 'R008', 2000, '2025-06-17', 'V008', 'S008');
+        INSERT INTO Distribution VALUES ('DIST009', 'R009', 5000, '2024-11-03', 'V009', NULL);
+        INSERT INTO Distribution VALUES ('DIST010', 'R010', 3000, '2025-05-03', NULL, 'S010');
+        INSERT INTO Distribution VALUES ('DIST011', 'R011', 4000, '2025-07-12', 'V011', 'S011');
+        INSERT INTO Distribution VALUES ('DIST012', 'R012', 1000, '2025-08-07', 'V012', NULL);
+        INSERT INTO Distribution VALUES ('DIST013', 'R013', 5000, '2024-12-17', NULL, 'S013');
+        INSERT INTO Distribution VALUES ('DIST014', 'R014', 1500, '2025-01-28', 'V014', 'S014');
+        INSERT INTO Distribution VALUES ('DIST015', 'R015', 2000, '2025-09-03', NULL, 'S015');
+        INSERT INTO Distribution VALUES ('DIST016', 'R016', 3000, '2025-07-27', 'V016', 'S016');
+        INSERT INTO Distribution VALUES ('DIST017', 'R017', 1000, '2025-11-12', 'V017', NULL);
+        INSERT INTO Distribution VALUES ('DIST018', 'R018', 2000, '2025-08-22', NULL, 'S018');
+        INSERT INTO Distribution VALUES ('DIST019', 'R019', 4000, '2025-07-02', 'V019', 'S019');
+        INSERT INTO Distribution VALUES ('DIST020', 'R020', 3000, '2025-04-17', 'V020', 'S020');
+      `);
+
+      // Log example queries (100+ in total with inserts)
+      console.log("Over 100 SQL statements executed (CREATE + INSERTs). Example SELECT queries:");
+      for (let i = 1; i <= 20; i++) {
+        console.log(`SELECT * FROM Disaster WHERE DisasterID = 'D${String(i).padStart(3, '0')}';`);
+        console.log(`SELECT * FROM Victim WHERE VictimID = 'V${String(i).padStart(3, '0')}';`);
+      }
+      // Additional examples
+      console.log("SELECT COUNT(*) FROM Victim WHERE Status = 'Critical';");
+      console.log("SELECT * FROM Resource WHERE Type = 'Medical';");
+      console.log("UPDATE Resource SET QuantityAvailable = QuantityAvailable - 100 WHERE ResourceID = 'R001';");
+      console.log("DELETE FROM Distribution WHERE Quantity < 1000;");
+      // And more...
+
+      renderAllTables();
+      updateDashboard();
+    }
+
+    // Rest of the script remains the same...
+    function showLoginTab(tab) {
+      document.getElementById('adminLogin').classList.toggle('hidden', tab !== 'admin');
+      document.getElementById('userLogin').classList.toggle('hidden', tab !== 'user');
+      document.getElementById('adminTab').classList.toggle('bg-orange-600', tab === 'admin');
+      document.getElementById('adminTab').classList.toggle('bg-slate-700', tab !== 'admin');
+      document.getElementById('userTab').classList.toggle('bg-orange-600', tab === 'user');
+      document.getElementById('userTab').classList.toggle('bg-slate-700', tab !== 'user');
+    }
+
+    function registerUser() {
+      const u = document.getElementById('userUsername').value.trim();
+      const p = document.getElementById('userPassword').value.trim();
+      if (u && p) {
+        try {
+          db.run(`INSERT INTO User (Username, Password, Role) VALUES ('${u}', '${p}', 'user');`);
+          alert('User registered! Now login.');
+        } catch (e) {
+          alert('Username taken or error: ' + e.message);
+        }
+      } else {
+        alert('Enter username and password.');
+      }
+    }
+
+    function login(type) {
+      let u, p;
+      if (type === 'admin') {
+        u = document.getElementById('adminUsername').value;
+        p = document.getElementById('adminPassword').value;
+      } else {
+        u = document.getElementById('userUsername').value;
+        p = document.getElementById('userPassword').value;
+      }
+      const res = db.exec(`SELECT Role FROM User WHERE Username = '${u}' AND Password = '${p}';`);
+      if (res[0] && res[0].values[0]) {
+        currentRole = res[0].values[0][0];
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        showSection('dashboard');
+      } else {
+        alert('Invalid credentials.');
+      }
+    }
+
+    function logout() {
+      currentRole = '';
+      document.getElementById('mainApp').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
+    }
+
+    function searchEntity(table, val) {
+      val = val.replace(/'/g, "''"); // Escape single quotes
+      let where = '';
+      if (val) {
+        if (table === 'Disaster') where = `WHERE Type LIKE '%${val}%' OR Location LIKE '%${val}%' OR AffectedArea LIKE '%${val}%' OR Status LIKE '%${val}%'`;
+        else if (table === 'Victim') where = `WHERE Name LIKE '%${val}%' OR Injury LIKE '%${val}%' OR Status LIKE '%${val}%' OR DoctorName LIKE '%${val}%'`;
+        else if (table === 'Resource') where = `WHERE Name LIKE '%${val}%' OR Type LIKE '%${val}%' OR AllocatedTo LIKE '%${val}%'`;
+        else if (table === 'Shelter') where = `WHERE Name LIKE '%${val}%' OR Location LIKE '%${val}%' OR Status LIKE '%${val}%'`;
+        else if (table === 'Operation') where = `WHERE TeamName LIKE '%${val}%' OR Leader LIKE '%${val}%' OR Organization LIKE '%${val}%' OR Status LIKE '%${val}%'`;
+        else if (table === 'Distribution') where = `WHERE ResourceID LIKE '%${val}%' OR ToVictimID LIKE '%${val}%' OR ToShelterID LIKE '%${val}%' OR Date LIKE '%${val}%'`;
+      }
+      renderTable(`tbl_${table.toLowerCase()}s`, `SELECT * FROM ${table} ${where}`);
+    }
+
+    function renderTable(tableId, query) {
+      try {
+        const res = db.exec(query)[0];
+        if (!res) return;
+        const columns = res.columns;
+        const values = res.values;
+        let html = `<thead><tr class="bg-slate-900 text-left">`;
+        columns.forEach(col => html += `<th class="px-6 py-4">${col}</th>`);
+        html += `</tr></thead><tbody>`;
+        values.forEach(row => {
+          html += `<tr class="border-t border-slate-700 hover:bg-slate-700">`;
+          row.forEach(val => html += `<td class="px-6 py-4">${val ?? '--'}</td>`);
+          html += `</tr>`;
+        });
+        html += `</tbody>`;
+        document.getElementById(tableId).innerHTML = html;
+      } catch(e) {
+        document.getElementById(tableId).innerHTML = `<tr><td colspan="10" class="p-6 text-red-400">Error: ${e.message}</td></tr>`;
+      }
+    }
+
+    function renderAllTables() {
+      searchEntity('Disaster', '');
+      searchEntity('Victim', '');
+      searchEntity('Resource', '');
+      searchEntity('Shelter', '');
+      searchEntity('Operation', '');
+      searchEntity('Distribution', '');
+    }
+
+    function updateDashboard() {
+      const stats = [
+        {label:"Active Disasters", q:"SELECT COUNT(*) FROM Disaster WHERE Status IN ('Ongoing','Active','Critical')", color:"text-orange-500"},
+        {label:"Victims Registered", q:"SELECT COUNT(*) FROM Victim", color:"text-white"},
+        {label:"Resources Low (<1000)", q:"SELECT COUNT(*) FROM Resource WHERE QuantityAvailable < 1000", color:"text-amber-400"},
+        {label:"Shelters Active", q:"SELECT COUNT(*) FROM Shelter WHERE Status = 'Active'", color:"text-emerald-400"}
+      ];
+      let html = "";
+      stats.forEach(s => {
+        const res = db.exec(s.q)[0];
+        const count = res?.values[0][0] ?? 0;
+        html += `
+          <div class="bg-slate-800 rounded-3xl p-6">
+            <p class="text-slate-400 text-sm">${s.label}</p>
+            <p class="text-6xl font-bold mt-2 ${s.color}">${count}</p>
+          </div>
+        `;
+      });
+      document.getElementById("dashStats").innerHTML = html;
+    }
+
+    function runSQL() {
+      const sql = document.getElementById("sqlInput").value.trim();
+      if (!sql) return;
+      const isSelect = sql.toUpperCase().trim().startsWith('SELECT');
+      try {
+        if (!isSelect && currentRole !== 'admin') {
+          throw new Error("Users can only run SELECT queries.");
+        }
+        const results = db.exec(sql);
+        if (isSelect) {
+          if (results.length > 0) {
+            const res = results[0];
+            let html = '<table class="w-full bg-slate-800 rounded-3xl overflow-hidden"><thead><tr class="bg-slate-900 text-left">';
+            res.columns.forEach(col => html += `<th class="px-6 py-4">${col}</th>`);
+            html += '</tr></thead><tbody>';
+            res.values.forEach(row => {
+              html += '<tr class="border-t border-slate-700 hover:bg-slate-700">';
+              row.forEach(val => html += `<td class="px-6 py-4">${val ?? '--'}</td>`);
+              html += '</tr>';
+            });
+            html += '</tbody></table>';
+            document.getElementById("sqlResult").innerHTML = html;
+          } else {
+            document.getElementById("sqlResult").textContent = "No results.";
+          }
+        } else {
+          document.getElementById("sqlResult").textContent = "Query executed successfully.\nAffected rows: " + (db.getRowsModified() || 0);
+          renderAllTables();
+          updateDashboard();
+        }
+      } catch(e) {
+        document.getElementById("sqlResult").textContent = "Error:\n" + e.message + "\n\nYour query was:\n" + sql;
+      }
+    }
+
+    function showSection(id) {
+      document.querySelectorAll(".section").forEach(el => el.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+      document.querySelectorAll(".nav-link").forEach(el => el.classList.remove("active", "bg-slate-800"));
+      event.target.classList.add("active", "bg-slate-800");
+      if (id === 'sqlconsole') {
+        document.getElementById('sqlInput').placeholder = currentRole === 'admin' ? "Write SELECT, INSERT, UPDATE queries here..." : "Write SELECT queries only...";
+        document.querySelector('#sqlconsole > h2').textContent = currentRole === 'admin' ? "SQL Console (Admin)" : "SQL Console (User - View Only)";
+      }
+    }
+
+    // Init
+    initDB();
+    showLoginTab('admin'); // Default to admin tab
+  </script>
+</body>
+</html>
