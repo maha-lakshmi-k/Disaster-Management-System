@@ -7,28 +7,28 @@ This project is implemented as a single-page web application using HTML, Tailwin
 The system stores and manages data using an in-browser SQL database, allowing users to view and interact with disaster-related information.
 
 
-#📌 Project Overview
+## 📌 Project Overview
 
 This project simulates a disaster response management platform.
 
 The system allows administrators and users to manage and monitor disaster-related data such as:
 
--Disaster information
+- Disaster information
 
--Victim records
+- Victim records
 
--Relief resources
+- Relief resources
 
--Shelters
+- Shelters
 
--Rescue operations
+- Rescue operations
 
--Resource distributions
+- Resource distributions
 
 The system provides a dashboard interface that displays important statistics and allows easy navigation between different modules.
 
 
-#🏗️ System Architecture
+## 🏗️ System Architecture
 
 The application follows a client-side architecture where all components run within the browser.
 
@@ -36,21 +36,21 @@ The application follows a client-side architecture where all components run with
 
 The user interface is built using:
 
--HTML
+- HTML
 
--TailwindCSS
+- TailwindCSS
 
--Font Awesome icons
+- Font Awesome icons
 
 It provides:
 
--Login interface (Admin / User)
+- Login interface (Admin / User)
 
--Dashboard view
+- Dashboard view
 
--Navigation sidebar
+- Navigation sidebar
 
--Data tables and search functionality
+- Data tables and search functionality
 
 2️⃣ Application Logic Layer
 
@@ -58,15 +58,15 @@ The application logic is implemented using JavaScript.
 
 It handles:
 
--User authentication
+- User authentication
 
--Navigation between sections
+- Navigation between sections
 
--Data searching and filtering
+- Data searching and filtering
 
--Dashboard statistics
+- Dashboard statistics
 
--SQL query execution
+- SQL query execution
 
 3️⃣ Database Layer
 
@@ -74,83 +74,82 @@ The system uses SQL.js, which is a JavaScript-based SQLite database running insi
 
 The database stores information in the following tables:
 
--Users
+- Users
 
--Disasters
+- Disasters
 
--Victims
+- Victims
 
--Resources
+- Resources
 
--Shelters
+- Shelters
 
--Operations
+- Operations
 
--Distributions
+- Distributions
 
 All data operations are performed using SQL queries.
 
 
-#⚙️ Technologies Used
+# ⚙️ Technologies Used
 
 The project is developed using the following technologies:
 
--HTML – Structure of the web page
+- HTML – Structure of the web page
 
--TailwindCSS – Styling and responsive design
+- TailwindCSS – Styling and responsive design
 
--JavaScript – Application functionality
+- JavaScript – Application functionality
 
--SQL.js (SQLite) – In-browser database
+- SQL.js (SQLite) – In-browser database
 
--Font Awesome – Icons
+- Font Awesome – Icons
 
--GitHub – Version control and project hosting
+- GitHub – Version control and project hosting
 
-#📂 Project Structure
+# 📂 Project Structure
 
 Since this project is implemented as a single-page application, the structure is simple.
 
 Disaster-Management-System
-│
-├── index.html 
-└── README.md
+- index.html 
+- README.md
 
 The HTML file contains:
 
--UI design
+- UI design
 
--JavaScript logic
+- JavaScript logic
 
--SQL database initialization
+- SQL database initialization
 
--Dashboard components
+- Dashboard components
 
-#✨ Features
+# ✨ Features
 
 The system provides the following features:
 
--Admin and User login system
+- Admin and User login system
 
--Disaster records management
+- Disaster records management
 
--Victim information tracking
+- Victim information tracking
 
--Resource management
+- Resource management
 
--Shelter monitoring
+- Shelter monitoring
 
--Rescue team operations management
+- Rescue team operations management
 
--Relief distribution tracking
+- Relief distribution tracking
 
--Search functionality for all modules
+- Search functionality for all modules
 
--Dashboard statistics display
+- Dashboard statistics display
 
--SQL console for executing database queries
+- SQL console for executing database queries
 
-#🚀 How to Run the Project
+## 🚀 How to Run the Project
 
 1️⃣ Download or clone the repository
 
