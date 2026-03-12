@@ -157,5 +157,6 @@ The system provides the following features:
 
 3️⃣ Open the HTML file in a web browser
 
-index.html
+- index.html
+  
 4️⃣ The application will start directly in the browser.
