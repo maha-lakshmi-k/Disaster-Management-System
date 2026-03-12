@@ -1,4 +1,4 @@
-# 🌪️ Disaster Management System
+#  Disaster Management System
 
 The Disaster Management System is a web-based application designed to manage and monitor disaster situations efficiently.
 It helps authorities track disasters, victims, resources, shelters, and relief operations through a single dashboard.
@@ -7,7 +7,7 @@ This project is implemented as a single-page web application using HTML, Tailwin
 The system stores and manages data using an in-browser SQL database, allowing users to view and interact with disaster-related information.
 
 
-## 📌 Project Overview
+##  Project Overview
 
 This project simulates a disaster response management platform.
 
@@ -28,11 +28,11 @@ The system allows administrators and users to manage and monitor disaster-relate
 The system provides a dashboard interface that displays important statistics and allows easy navigation between different modules.
 
 
-## 🏗️ System Architecture
+##  System Architecture
 
 The application follows a client-side architecture where all components run within the browser.
 
-1️⃣ User Interface Layer
+ 1 User Interface Layer
 
 The user interface is built using:
 
@@ -52,7 +52,7 @@ It provides:
 
 - Data tables and search functionality
 
-2️⃣ Application Logic Layer
+2️ Application Logic Layer
 
 The application logic is implemented using JavaScript.
 
@@ -68,7 +68,7 @@ It handles:
 
 - SQL query execution
 
-3️⃣ Database Layer
+3️ Database Layer
 
 The system uses SQL.js, which is a JavaScript-based SQLite database running inside the browser.
 
@@ -91,7 +91,7 @@ The database stores information in the following tables:
 All data operations are performed using SQL queries.
 
 
-# ⚙️ Technologies Used
+#  Technologies Used
 
 The project is developed using the following technologies:
 
@@ -107,7 +107,7 @@ The project is developed using the following technologies:
 
 - GitHub – Version control and project hosting
 
-# 📂 Project Structure
+#  Project Structure
 
 Since this project is implemented as a single-page application, the structure is simple.
 
@@ -125,7 +125,7 @@ The HTML file contains:
 
 - Dashboard components
 
-# ✨ Features
+#  Features
 
 The system provides the following features:
 
@@ -149,7 +149,7 @@ The system provides the following features:
 
 - SQL console for executing database queries
 
-## 🚀 How to Run the Project
+##  How to Run the Project
 
 ### Method 1: Using a Web Browser
 
