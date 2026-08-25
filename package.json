@@ -1,0 +1,14 @@
+{
+  "name": "disaster-management-system",
+  "version": "1.0.0",
+  "description": "Disaster Management & Emergency Response System",
+  "main": "server/index.js",
+  "scripts": {
+    "server": "node server/index.js",
+    "client": "npm run dev --prefix client",
+    "dev": "node server/index.js"
+  },
+  "keywords": ["disaster-management", "emergency-response", "dbms", "full-stack"],
+  "author": "",
+  "license": "ISC"
+}
